@@ -1,8 +1,8 @@
 [
 {
   "directory": "/Users/deva/Projects/niva/minbus/build",
-  "command": "/usr/local/opt/llvm/bin/clang++ -DMSGPACK_DEFAULT_API_VERSION=3 -isystem /usr/local/include -I/Users/deva/Projects/niva/minbus/include -Wall -Wextra -o CMakeFiles/minbus.dir/src/minbus.cpp.o -c /Users/deva/Projects/niva/minbus/src/minbus.cpp",
-  "file": "/Users/deva/Projects/niva/minbus/src/minbus.cpp",
-  "output": "/Users/deva/Projects/niva/minbus/build/CMakeFiles/minbus.dir/src/minbus.cpp.o"
+  "command": "/usr/local/opt/llvm/bin/clang++ -DMSGPACK_DEFAULT_API_VERSION=3 -I/Users/deva/Projects/niva/minbus/libminbus/include -isystem /usr/local/include -std=gnu++23 -Wall -Wextra -o minbusd/CMakeFiles/minbusd.dir/src/minbus.cpp.o -c /Users/deva/Projects/niva/minbus/minbusd/src/minbus.cpp",
+  "file": "/Users/deva/Projects/niva/minbus/minbusd/src/minbus.cpp",
+  "output": "/Users/deva/Projects/niva/minbus/build/minbusd/CMakeFiles/minbusd.dir/src/minbus.cpp.o"
 }
 ]

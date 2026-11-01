@@ -14,3 +14,4 @@ target_include_directories(minbus INTERFACE libminbus/include)
 target_link_libraries(minbus INTERFACE msgpack-cxx cppzmq)
 
 add_subdirectory(minbusd)
+add_subdirectory(tests)
