@@ -60,7 +60,6 @@ namespace m { // minbus namespace
                   if (magic_found) return false;
                   if (obj.via.map.ptr[i].val.type == msgpack::type::STR) {
                     if (obj.via.map.ptr[i].val.as<std::string>() == "MINBUS") {
-                      std::cout << "HEADER VERIFIED!!!" << std::endl;
                       magic_found = true;
                     } else {
                       std::cerr << "Magic Header is bad!" << std::endl;
