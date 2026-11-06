@@ -81,7 +81,8 @@ namespace t { // minbus transport namespace
         
         public:
             const char* socket_;
-            BrokerTransport(const char* socket = "ipc:///var/run/minbus.sock") : llt_(lctx_, zmq::socket_type::router) {
+            
+            explicit BrokerTransport(const char* socket = "ipc:///var/run/minbus.sock") : llt_(lctx_, zmq::socket_type::router) {
                 llt_.llbind(socket);
                 socket_ = socket;
             }
@@ -117,6 +118,39 @@ namespace t { // minbus transport namespace
                 
                 msg = std::move(temp);
                 
+                return true;
+            }
+    };
+
+    class ClientTransport {
+        private:
+            m::Serial ser_;
+            Context lctx_;
+            LowLTransport llt_;
+
+        public:
+            explicit ClientTransport(const char* socket = "ipc:///var/run/minbus.sock") : llt_(lctx_, zmq::socket_type::dealer),socket_(socket) {
+                llt_.llconnect(socket);
+            }
+
+            bool send(const p::Message& msg) {
+                ser_.genpkt(msg);
+                return llt_.llsendpart(ser_.data(), ser_.size());
+            }
+
+            bool recv(p::Message& msg) {
+                std::vector<std::byte> data;
+                if (!llt_.llrecv(data)) return false;
+
+                p::Message temp;
+                if (!ser_.degenpkt(
+                        reinterpret_cast<const char*>(data.data()),
+                        data.size(),
+                        temp)) {
+                    return false;
+                }
+
+                msg = std::move(temp);
                 return true;
             }
     };
