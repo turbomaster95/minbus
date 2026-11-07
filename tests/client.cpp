@@ -2,11 +2,7 @@
 #include <zmq.hpp>
 
 int main() {
-    t::Context ctx;
 
-    t::LowLTransport lts(ctx, zmq::socket_type::dealer);
-
-    lts.llsetid("client1");
 
     p::Message msg;
     
