@@ -1,15 +1,30 @@
 #pragma once
 
 #include <zmq.hpp>
-#include <minbus.hpp>
+#include <minbus/mproto.hpp>
 #include <cstddef>
 #include <cstring>
 #include <vector>
+#include <cstdlib>
+#include <stdexcept>
+#include <unistd.h>
 
 namespace t { // minbus transport namespace
     class Context {
         public:
             zmq::context_t ctx;
+    };
+
+    class Helpers {
+        public:
+            inline std::string get_socketfile() {
+                const char* runtime_dir = std::getenv("XDG_RUNTIME_DIR");
+                if (!runtime_dir || *runtime_dir == '\0') {
+                            throw std::runtime_error("XDG_RUNTIME_DIR is not set");
+                }
+
+                return std::string("ipc://") + runtime_dir + "/minbus.sock";
+            }
     };
     
     class LowLTransport {
@@ -18,7 +33,7 @@ namespace t { // minbus transport namespace
         
         public:
             LowLTransport(Context& ctx, zmq::socket_type type): sock_(ctx.ctx, type) {}
-            
+
             void llbind(const char* socket = "ipc:///var/run/minbus.sock") { sock_.bind(socket); }
             void llconnect(const char* socket = "ipc:///var/run/minbus.sock") { sock_.connect(socket); }
             
@@ -78,13 +93,14 @@ namespace t { // minbus transport namespace
             m::Serial ser_;
             Context lctx_;
             LowLTransport llt_;
-        
-        public:
-            const char* socket_;
+            Helpers hlp;
             
-            explicit BrokerTransport(const char* socket = "ipc:///var/run/minbus.sock") : llt_(lctx_, zmq::socket_type::router) {
-                llt_.llbind(socket);
-                socket_ = socket;
+        public:
+            const std::string endpoint = hlp.get_socketfile();
+            const char* socket_ = endpoint.c_str();
+
+            explicit BrokerTransport() : llt_(lctx_, zmq::socket_type::router) {
+                llt_.llbind(socket_);
             }
             
             ~BrokerTransport() {
@@ -127,9 +143,13 @@ namespace t { // minbus transport namespace
             m::Serial ser_;
             Context lctx_;
             LowLTransport llt_;
-
+            Helpers hlp;
+            
         public:
-            explicit ClientTransport(const char* socket = "ipc:///var/run/minbus.sock") : llt_(lctx_, zmq::socket_type::dealer),socket_(socket) {
+            const std::string endpoint = hlp.get_socketfile();
+            const char* socket = endpoint.c_str();
+            
+            explicit ClientTransport() : llt_(lctx_, zmq::socket_type::dealer) {
                 llt_.llconnect(socket);
             }
 
@@ -154,4 +174,4 @@ namespace t { // minbus transport namespace
                 return true;
             }
     };
-}
+};

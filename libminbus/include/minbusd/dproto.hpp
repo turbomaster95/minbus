@@ -118,3 +118,5 @@ namespace md {
       }
   };
 }
+
+MSGPACK_ADD_ENUM(md::Actions);
